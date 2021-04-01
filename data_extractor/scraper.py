@@ -1,11 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# ## Imports
-
-# In[1]:
-
-
+# Imports
 import requests
 from bs4 import BeautifulSoup
 import csv
@@ -13,20 +9,13 @@ import time
 import os
 
 
-# ## Useful functions
-
-# In[2]:
-
-
+# Functions
 def get_soup(url):
     page = requests.get(url)
 
     soup = BeautifulSoup(page.content, 'html.parser')
 
     return soup
-
-
-# In[3]:
 
 
 def get_all_rows(soup):
@@ -37,17 +26,10 @@ def get_all_rows(soup):
     return trs
 
 
-# In[4]:
-
-
 def scrapy_row(tr, year):
-    identity = None
-    body = None
-
     if 'class' in tr.attrs and 'thead' in tr.attrs['class']:
         return None
 
-    # td_year = tr.find('td', {'data-stat': 'year_id'})
     td_round = tr.find('th', {'data-stat': 'draft_round'})
     td_pick = tr.find('td', {'data-stat': 'draft_pick'})
 
@@ -79,41 +61,20 @@ def scrapy_row(tr, year):
     return data
 
 
-# In[5]:
+# Scrapping
+def get(first_year=1970, last_year=2020):
+    DATA_DIR = os.path.join('..', 'data')
+    TARGET = os.path.join(DATA_DIR, 'drafted_players' + '.csv')
 
-
-def get_next_url(soup):
-    next_btn = soup.find('a', {'class': 'button2 next'}, href=True)
-
-    if next_btn is None:
-        return None
-
-    return next_btn['href']
-
-
-# In[6]:
-
-
-async def save_player(player, writer):
-    print('async writting')
-    writer.writerow(player)
-
-
-# ## Scrapping
-
-# In[7]:
-
-
-def get(first_year=1970, last_year=2020, target='drafted_players'):
-    if os.path.isfile(target + '.csv'):
-        os.remove(target + '.csv')
+    os.makedirs(DATA_DIR, exist_ok=True)
+    if os.path.isfile(TARGET):
+        os.remove(TARGET)
         
-    with open(target + '.csv', 'w', newline='') as csvfile:
+    with open(TARGET, newline='', mode='w+') as csvfile:
         fieldnames = ['year', 'round', 'pick', 'player_name', 'position', 'age', 
                           'first_team_ap', 'pro_bowls', 'team', 'av']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
-        page = 0
 
         for year in range(last_year, first_year - 1, -1):
             path = 'https://www.pro-football-reference.com/years/{}/draft.htm'.format(year)
@@ -123,7 +84,7 @@ def get(first_year=1970, last_year=2020, target='drafted_players'):
             soup = get_soup(path)
 
             trs = get_all_rows(soup)
-            for i, tr in enumerate(trs):
+            for tr in trs:
                 player = scrapy_row(tr, year)
                 if player is None:
                     continue
@@ -135,19 +96,9 @@ def get(first_year=1970, last_year=2020, target='drafted_players'):
             print(str(year) + ' took ' + str(round(end - start)) + 's')
 
 
-# In[8]:
-
-
 start = time.time()
 
 get()
 
 end = time.time()
 print('Overall time: ' + str(round(end - start)) + 's')
-
-
-# In[ ]:
-
-
-
-
