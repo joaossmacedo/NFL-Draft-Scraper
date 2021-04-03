@@ -83,18 +83,35 @@ def scrapy_row(tr, draft_year):
 
     td_round = tr.find('th', {'data-stat': 'draft_round'})
     td_pick = tr.find('td', {'data-stat': 'draft_pick'})
+    td_team = tr.find('td', {'data-stat': 'team'})
 
     td_name = tr.find('td', {'data-stat': 'player'})
     td_position = tr.find('td', {'data-stat': 'pos'})
     td_age = tr.find('td', {'data-stat': 'age'})
+    td_year_max = tr.find('td', {'data-stat': 'year_max'})
+    td_starter_years = tr.find('td', {'data-stat': 'years_as_primary_starter'})
+    td_games = tr.find('td', {'data-stat': 'g'})
+    td_college = tr.find(('td', {'data-stat': 'college_id'}))
     td_first_team_ap = tr.find('td', {'data-stat': 'all_pros_first_team'})
     td_pro_bowls = tr.find('td', {'data-stat': 'pro_bowls'})
-    td_team = tr.find('td', {'data-stat': 'team'})
     td_av = tr.find('td', {'data-stat': 'career_av'})
+    td_drafted_av = tr.find('td', {'data-stat': 'draft_av'})
+    
     av = td_av.text
     if av == '':
         av = '0'
-
+    drafted_av = td_drafted_av.text
+    if drafted_av == '':
+        drafted_av = '0'
+    games = td_games.text
+    if games == '':
+        games = '0'
+    carrer_duration = 0
+    if td_year_max.text != '':
+        carrer_duration = int(td_year_max.text) - draft_year + 1
+    age = td_age.text
+    if age != '':
+        age = int(age)
     first4year_av = 0
 
     try:
@@ -114,17 +131,26 @@ def scrapy_row(tr, draft_year):
         pass
 
     data = {
-        'year': draft_year,
-        'round': td_round.text,
-        'pick': td_pick.text,
+        'year': int(draft_year),
+        'round': int(td_round.text),
+        'pick': int(td_pick.text),
+        'team': td_team.text,
+        
         'player_name': td_name.text,
         'position': td_position.text,
-        'age': td_age.text,
-        'first_team_ap': td_first_team_ap.text,
-        'pro_bowls': td_pro_bowls.text,
-        'team': td_team.text,
-        'av': av,
-        'first_4_years_av': first4year_av
+        'drafted_age': age,
+        'college': td_college.text,
+
+        
+        'games': int(games),
+        'years_as_starter': int(td_starter_years.text),
+        'carrer_duration': int(carrer_duration),
+
+        'first_team_ap': int(td_first_team_ap.text),
+        'pro_bowls': int(td_pro_bowls.text),
+        'av': int(av),
+        'av_by_drafted_team': int(drafted_av),
+        'first_4_years_av': int(first4year_av)
     }
 
     return data
@@ -137,8 +163,11 @@ def get():
         os.remove(TARGET)
         
     with open(TARGET, newline='', mode='w+') as csv_file:
-        fieldnames = ['year', 'round', 'pick', 'player_name', 'position', 'age', 
-                      'first_team_ap', 'pro_bowls', 'team', 'av', 'first_4_years_av']
+        fieldnames = ['year', 'round', 'pick', 'team',
+                      'player_name', 'position', 'drafted_age', 'college', 
+                      'games', 'years_as_starter', 'carrer_duration',
+                      'first_team_ap', 'pro_bowls',
+                      'av', 'av_by_drafted_team','first_4_years_av']
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
 
