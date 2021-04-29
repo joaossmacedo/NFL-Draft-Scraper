@@ -1,4 +1,4 @@
-# Box plot analysis of the NFL Draft
+# Data analysis of the NFL Draft
 ## 1. Introduction
 I have decided to do an analysis of the NFL draft using AV(Approximate Value) per year. AV is a metric used by Pro Football Reference that tries to approximate value of a player in a season.  
 
@@ -14,7 +14,7 @@ However I believe the gains outweights the losses.
 
 Other decision I made was to limit data from 2000 to 2017. The players on the most recent drafts don't have a big enough sample size and the older ones are not a good comparison because the game has changed a lot.
 
-## 2. The expected and the unexpected results by round
+## 2. The expected and unexpected results by round and position
 ### QB
 As expected it's very hard to find great QBs outside of ther first round. You might still find some value in rounds 2 - 4 but you shouldn't draft a QB there and expect to find a superstar. 
 
