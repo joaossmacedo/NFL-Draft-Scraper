@@ -14,7 +14,7 @@ However I believe the gains outweights the losses.
 
 Other decision I made was to limit data from 2000 to 2017. The players on the most recent drafts don't have a big enough sample size and the older ones are not a good comparison because the game has changed a lot.
 
-## 2. The expected and unexpected results by round and position
+## 2. The expected and unexpected results according to round and position
 ### QB
 As expected it's very hard to find great QBs outside of ther first round. You might still find some value in rounds 2 - 4 but you shouldn't draft a QB there and expect to find a superstar. 
 
